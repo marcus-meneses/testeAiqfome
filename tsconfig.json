@@ -2,11 +2,21 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+     "@common/*": ["common/*"],
+      "@utils/*": ["utils/*"],
+      "@product/*": ["product/*"],
+      "@user/*": ["user/*"],
+    }
   }
 }
