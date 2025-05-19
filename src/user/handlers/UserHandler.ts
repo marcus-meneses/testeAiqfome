@@ -16,6 +16,17 @@ export class UserHandler {
         }
     };
 
+    public static getUserById: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = parseInt(req.params.id);
+            // Simulate fetching a user by ID from a database or service
+            const user = { id: userId, name: "John Doe" };
+            res.status(200).json(user);
+        } catch (error) {
+            next(error);
+        }
+    };
+
     public static registerUser: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
         try {
             // Simulate user registration logic
@@ -30,4 +41,25 @@ export class UserHandler {
             next(error);
         }
     }
+
+    public static updateUser: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = parseInt(req.params.id);
+            const { name } = req.body;
+            // Simulate updating a user in a database or service
+            res.status(200).json({ message: `User ${userId} updated successfully`, name });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public static deleteUser: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = parseInt(req.params.id);
+            // Simulate deleting a user from a database or service
+            res.status(200).json({ message: `User ${userId} deleted successfully` });
+        } catch (error) {
+            next(error);
+        }
+    };
 }

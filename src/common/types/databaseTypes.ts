@@ -6,11 +6,8 @@ type databaseConfig = {
     port: number;
 }
 
-interface databaseInterface {
-    runQuery(query: string, params?: any[]): Promise<any>;
-}
+ 
 
 export {
     databaseConfig,
-    databaseInterface
 }
