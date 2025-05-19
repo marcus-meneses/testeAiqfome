@@ -16,42 +16,100 @@ const configuration = Config.Instance;
 const server = express();
 server.use(express.json());
 
-//Serves Swagger UI
-server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+//swagger.description = "Rota do swagger para a documentação da API";
+server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
-//logs in a registered user
+//swagger.description = "Rota para login de usuário";
 server.post("/login", AuthenticationHandler.login);
 
-//adds a new user
+//swagger.description = "Rota para registro de usuário";
 server.post("/users/register", UserHandler.registerUser);
-//gets all users
-server.get("/users", AuthenticationHandler.authenticate, UserHandler.getAllUsers);
-//gets a user by id
-server.get("/users/:id", AuthenticationHandler.authenticate, UserHandler.getUserById);
-//updates a user
-server.put("/users", AuthenticationHandler.authenticate, UserHandler.updateUser);
-//deletes a user
-server.delete("/users/:id", AuthenticationHandler.authenticate, UserHandler.deleteUser);
+
+//swagger.description = "Rota para busca de todos os usuários";
+server.get(
+  "/users",
+  AuthenticationHandler.authenticate,
+  UserHandler.getAllUsers
+);
+
+
+//swagger.description = "Rota para busca de usuário por id";
+server.get(
+  "/users/:id",
+  AuthenticationHandler.authenticate,
+  UserHandler.getUserById
+);
+
+
+//swagger.description = "Rota para atualização de usuário";
+server.put(
+  "/users/:id",
+  AuthenticationHandler.authenticate,
+  UserHandler.updateUser
+);
+
+
+//swagger.description = "Rota para deletar usuário";
+server.delete(
+  "/users/:id",
+  AuthenticationHandler.authenticate,
+  UserHandler.deleteUser
+);
 
 //adds a new product if it does not exist in the database after validating its existence in
 //the fake store API. Adds a UserProduct relation in the database for the newly created product
-server.post("/products", AuthenticationHandler.authenticate, ProductHandler.addProduct);
-//gets all products from the database
-server.get("/products", AuthenticationHandler.authenticate, ProductHandler.getAllProducts);
-//gets all products from the database that belong to a user
-server.get("/products/user/:id", AuthenticationHandler.authenticate, ProductHandler.getProductsByUserId);
-//gets a product by id from the database
-server.get("/products/:id", AuthenticationHandler.authenticate, ProductHandler.getProductById);
-//deletes a userproduct relation from the database
-server.delete("/products/:id", AuthenticationHandler.authenticate, ProductHandler.deleteProduct);
+//swagger.description = "Rota para adicionar produto";
+server.post(
+  "/products",
+  AuthenticationHandler.authenticate,
+  ProductHandler.addProduct
+);
 
 
-//gets all products from the fake store API
-server.get("/api/fakeproducts", AuthenticationHandler.authenticate, FakeStoreHandler.getAllProducts);
-//gets a product by id from the fake store API
-server.get("/api/fakeproducts/:id", AuthenticationHandler.authenticate, FakeStoreHandler.getProductById);
+//swagger.description = "Rota para buscar todos os produtos na base de dados";
+server.get(
+  "/products",
+  AuthenticationHandler.authenticate,
+  ProductHandler.getAllProducts
+);
 
 
-server.listen(configuration.get('PORT'), () => {
-  logger.info(`Server running on http://localhost:${configuration.get('PORT')}`);
+//swagger.description = "Rota para buscar produtos por id de usuário";
+server.get(
+  "/products/user/:id",
+  AuthenticationHandler.authenticate,
+  ProductHandler.getProductsByUserId
+);
+
+//swagger.description = "Rota para buscar produto por id na base de dados";
+server.get(
+  "/products/:id",
+  AuthenticationHandler.authenticate,
+  ProductHandler.getProductById
+);
+
+
+//swagger.description = "Rota para excuir produto de um perfil de usuário";
+server.delete(
+  "/products/:id",
+  AuthenticationHandler.authenticate,
+  ProductHandler.deleteProduct
+);
+
+//swagger.description = Busca todos os produtos da fake store API
+server.get(
+  "/api/fakeproducts",
+  FakeStoreHandler.getAllProducts
+);
+
+//swagger.description = "Rota para buscar produto por id na fake store API";
+server.get(
+  "/api/fakeproducts/:id",
+  FakeStoreHandler.getProductById
+);
+
+server.listen(configuration.get("PORT"), () => {
+  logger.info(
+    `Server running on http://localhost:${configuration.get("PORT")}`
+  );
 });

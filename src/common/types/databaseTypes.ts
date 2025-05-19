@@ -6,8 +6,6 @@ type databaseConfig = {
     port: number;
 }
 
- 
-
 export {
     databaseConfig,
 }

@@ -31,6 +31,12 @@ class DatabaseQueryError extends CustomError {
   }
 }
 
+class DatabaseTransactionError extends CustomError {
+  constructor(message = "Database transaction Error", details?: any) {
+    super(message, 500, details);
+  }
+}
+
 class BadRequestError extends CustomError {
   constructor(message = "Bad Request", details?: any) {
     super(message, 400, details);
@@ -40,6 +46,22 @@ class BadRequestError extends CustomError {
 class NotFoundError extends CustomError {
   constructor(message = "Not Found", details?: any) {
     super(message, 404, details);
+  }
+}
+
+class CreationFailedError extends CustomError {
+  constructor(message = "Creation Failed", details?: any) {
+    super(message, 500, details);
+  }
+}
+class DeletionFailedError extends CustomError { 
+  constructor(message = "Deletion Failed", details?: any) {
+    super(message, 500, details);
+  }
+}
+class UpdateFailedError extends CustomError {
+  constructor(message = "Update Failed", details?: any) {
+    super(message, 500, details);
   }
 }
 
@@ -62,4 +84,8 @@ export {
   NotFoundError,
   InternalServerError,
   NetworkError,
+  CreationFailedError,
+  UpdateFailedError,
+  DeletionFailedError,
+  DatabaseTransactionError,
 };

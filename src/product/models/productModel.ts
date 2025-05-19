@@ -1,9 +1,8 @@
 export interface Product {
     id: string;
-    fakestore_id: number;
+    fakestore_id: Number;
     title: string;
     image?: string;
-    price: number;
-    review?: number;
-  }
-  
+    price: Number;
+    review?: Number;
+}

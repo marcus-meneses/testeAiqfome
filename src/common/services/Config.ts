@@ -37,6 +37,9 @@ export class Config {
 
   get(key: string): any {
     const entry = this.data.find((entry) => entry.key === key);
+    if (!entry) {
+      throw new Error(`Key ${key} not found in configuration`);
+    }
     return entry ? entry.value : null;
   }
 }

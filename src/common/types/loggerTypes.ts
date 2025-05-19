@@ -1,19 +1,15 @@
 enum logLevel {
-    none, 
-    debug,  
-    info,  
-    warning,
-    error  
-  }
+  none,
+  debug,
+  info,
+  warning,
+  error,
+}
 
-type logConfig ={
-    logLevel: logLevel;
-    logFile: string;
-    logTransport: Function | null;
-  }
+type logConfig = {
+  logLevel: logLevel;
+  logFile: string;
+  logTransport: Function | null;
+};
 
-  export {
-    logConfig,
-    logLevel,
-  }
-  
+export { logConfig, logLevel };
