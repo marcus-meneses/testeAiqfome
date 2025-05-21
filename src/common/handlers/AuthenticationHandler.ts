@@ -1,46 +1,97 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
+import { UserRepository } from "@/user/repositories/userRepository";
+import * as CustomError from "@common/services/CustomError";
+import jwt from "jsonwebtoken";
 
+import { Config } from "@common/services/Config";
+import { Logger } from "../services/Logger";
+
+const configuration = Config.Instance;
+const logger = Logger.Instance;
 export class AuthenticationHandler {
   public static login: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
+
+    /** 
+      #swagger.tags = ['User']
+      #swagger.summary = 'Login user'
+      #swagger.description = 'Login user and return token'
+    
+      #swagger.requestBody = {  
+         required: true,  
+         schema: { "$ref": "#/components/schemas/LoginUser" }  
+      }  
+     */  
+
     try {
-      // Simulate login logic
-      const { username, password } = req.body;
-      if (username === "admin" && password === "password") {
-        // Generate a token (for demonstration purposes, we'll just return a static token)
-        const token = "token_12345";
-        res.status(200).json({ token });
+      const userRepository = new UserRepository();
+      const { email, password } = req.body;
+      const user = await userRepository.findByCredentials(email, password);
+
+      if (user) {
+        const token = jwt.sign(user, configuration.get("RANDOM_KEY"), {
+          expiresIn: "1h",
+        });
+
+        res.status(200).json({ user: user, token: token });
       } else {
-        // Invalid credentials, send an error response
-        res.status(401).json({ message: "Invalid credentials" });
+        throw new CustomError.UnauthorizedError("Invalid email or password");
       }
     } catch (error) {
-      // Handle any errors that occur during the login process
       next(error);
     }
   };
+
+     
+    
+    
 
   public static authenticate: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
+
+      // #swagger.auto = false
+
     try {
-      // Simulate authentication logic
       const token = req.headers["authorization"];
       if (token) {
-        // Token is valid, proceed to the next middleware
-        next();
+        const decoded = jwt.verify(token.replace(/^Bearer\s/, ''), configuration.get("RANDOM_KEY"));
+        if (decoded) {
+          req.body.user = decoded;
+          next();
+        } else {
+          res.status(401).json({ message: "Unauthorized" });
+        }
       } else {
-        // Token is missing or invalid, send an error response
         res.status(401).json({ message: "Unauthorized" });
       }
     } catch (error) {
       next(error);
     }
+  };
+
+
+      
+     
+       
+  public static ownData: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+
+     // #swagger.auto = false
+
+    if (!req.body) {
+      req.body = {};
+    }
+    req.body.ownData = true;
+    next();
   };
 
   public static refreshToken: RequestHandler = async (
@@ -49,14 +100,11 @@ export class AuthenticationHandler {
     next: NextFunction
   ) => {
     try {
-      // Simulate token refresh logic
       const oldToken = req.headers["authorization"];
       if (oldToken) {
-        // Generate a new token (for demonstration purposes, we'll just return a static token)
         const newToken = "new_token_12345";
         res.status(200).json({ token: newToken });
       } else {
-        // Old token is missing or invalid, send an error response
         res.status(401).json({ message: "Unauthorized" });
       }
     } catch (error) {

@@ -3,7 +3,7 @@
   "info": {
     "version": "v1.0.0",
     "title": "Teste Aiqfome",
-    "description": "Teste requisitado para a vaga de Engenheiro(a) de Software SR | APIs e Backoffice | L2L Aiqfome"
+    "description": "Teste requisitado para a vaga de Engenheiro(a) de Software SR | APIs e Backoffice | L2L Aiqfome ;)"
   },
   "servers": [
     {
@@ -13,28 +13,27 @@
   "paths": {
     "/login": {
       "post": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "summary": "Login user",
+        "description": "Login user and return token",
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
               }
             }
           }
@@ -43,28 +42,30 @@
     },
     "/users/register": {
       "post": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "summary": "Create user",
+        "description": "Create new user and return user data",
         "responses": {
           "201": {
             "description": "Created"
           },
-          "400": {
-            "description": "Bad Request"
+          "409": {
+            "description": "Conflict"
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
               }
             }
           }
@@ -74,21 +75,9 @@
     "/users": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -96,69 +85,50 @@
     "/users/{id}": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "summary": "Update user",
+        "description": "Update user (self-update) and return user data",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "User ID",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
               }
             }
           }
@@ -166,29 +136,9 @@
       },
       "delete": {
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -196,61 +146,17 @@
     "/products": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "example": "any"
-                  },
-                  "userId": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
+          "default": {
+            "description": ""
           }
         }
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -258,29 +164,9 @@
     "/products/user/{id}": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -288,74 +174,17 @@
     "/products/{id}": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "default": {
+            "description": ""
           }
         }
       },
       "delete": {
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "userId": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
+          "default": {
+            "description": ""
           }
         }
       }
@@ -395,7 +224,67 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme."
+      }
+    },
+    "schemas": {
+      "LoginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "eu@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "xml": {
+          "name": "LoginUser"
+        }
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Fulano de Tal"
+          },
+          "email": {
+            "type": "string",
+            "example": "eu@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "xml": {
+          "name": "CreateUser"
+        }
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "44bf1ff9-c0ba-41d6-b5ee-09f2e2c7934d"
+          },
+          "name": {
+            "type": "string",
+            "example": "Fulano de Tal"
+          },
+          "email": {
+            "type": "string",
+            "example": "novo@mail.com"
+          }
+        },
+        "xml": {
+          "name": "UpdateUser"
+        }
       }
     }
   }

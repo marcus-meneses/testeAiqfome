@@ -14,17 +14,13 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"],
-     "@common/*": ["common/*"],
+      "@source/*": ["src/*"],
+      "@common/*": ["common/*"],
       "@utils/*": ["utils/*"],
       "@product/*": ["product/*"],
-      "@user/*": ["user/*"],
+      "@user/*": ["user/*"]
     }
   },
-  "include": [
-    "src/swagger-output.json",
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/swagger-output.json", "src/**/*", "swagger.ts"],
+  "exclude": ["node_modules"]
 }

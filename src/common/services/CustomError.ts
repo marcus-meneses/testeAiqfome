@@ -51,10 +51,10 @@ class NotFoundError extends CustomError {
 
 class CreationFailedError extends CustomError {
   constructor(message = "Creation Failed", details?: any) {
-    super(message, 500, details);
+    super(message, 409, details);
   }
 }
-class DeletionFailedError extends CustomError { 
+class DeletionFailedError extends CustomError {
   constructor(message = "Deletion Failed", details?: any) {
     super(message, 500, details);
   }
@@ -77,6 +77,12 @@ class InternalServerError extends CustomError {
   }
 }
 
+class UnauthorizedError extends CustomError {
+  constructor(message = "Unauthorized", details?: any) {
+    super(message, 401, details);
+  }
+}
+
 export {
   DatabaseConnectionError,
   DatabaseQueryError,
@@ -88,4 +94,6 @@ export {
   UpdateFailedError,
   DeletionFailedError,
   DatabaseTransactionError,
+  UnauthorizedError,
+  CustomError as Parent,
 };

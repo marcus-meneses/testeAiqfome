@@ -1,4 +1,5 @@
 import Dotenv from "dotenv";
+import fs from "fs";
 import * as configTypes from "@common/types/configTypes";
 
 export class Config {
@@ -20,6 +21,15 @@ export class Config {
         this.set(configKey, value);
       }
     }
+
+    const keypath = `./keys/randomkey`;
+    if (fs.existsSync(keypath)) {
+      const key = fs.readFileSync(keypath, "utf8");
+      this.set("RANDOM_KEY", key);
+    } else {
+      throw new Error(`secretkey file not found: ${keypath}`);
+    }
+
   }
 
   public static get Instance(): Config {

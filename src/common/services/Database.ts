@@ -2,6 +2,7 @@ import * as CustomError from "../services/CustomError";
 import { Pool, PoolClient } from "pg";
 import { Config } from "@common/services/Config";
 import { Logger } from "@common/services/Logger";
+import e from "express";
 
 const configuration = Config.Instance;
 const logger = Logger.Instance;
@@ -77,16 +78,25 @@ class Transaction {
 }
 
 export class Database {
-  private pool: Pool;
+  private pool!: Pool;
   private static _instance: Database;
 
   private constructor() {
+    this.getPool();
+  }
+
+  private getPool(): void {
     this.pool = new Pool({
       user: configuration.get("DBUSERNAME"),
       host: configuration.get("DBHOST"),
       database: configuration.get("DBNAME"),
       password: configuration.get("DBPASSWORD"),
       port: configuration.get("DBPORT"),
+    });
+
+    this.pool.on("error", (err: Error) => {
+      logger.error("Unexpected error on db connection");
+      this.getPool();
     });
   }
 
@@ -110,25 +120,29 @@ export class Database {
   }
 
   public async runQuery(query: string, params?: any[]): Promise<unknown> {
+    let client: PoolClient | null = null;
+
     try {
-      const client = await this.pool.connect();
-      logger.info("Database connection successful");
-      try {
-        const result = await client.query(query, params);
-        return result.rows;
-      } catch (error) {
-        throw new CustomError.DatabaseQueryError(
-          "Database query failed",
-          error
-        );
-      } finally {
+      client = await this.pool.connect();
+      logger.info("Database client connection successful");
+    } catch (error) {
+      if (client) {
         client.release();
       }
-    } catch (error) {
       throw new CustomError.DatabaseConnectionError(
         "Database connection failed",
         error
       );
+    }
+
+    try {
+      logger.info("Running query: <" + query + "> with parameters: " + params);
+      const result = await client.query(query, params);
+      return result.rows;
+    } catch (error) {
+      throw new CustomError.DatabaseQueryError("Database query failed", error);
+    } finally {
+      client.release();
     }
   }
 }

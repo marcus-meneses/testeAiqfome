@@ -8,7 +8,7 @@ COPY .env.production ./
 RUN npm install --production
 RUN npm install pm2 -g
 
-COPY ./dist /app
+COPY ./dist ./
 
 ENV NODE_ENV=production
 EXPOSE 3000
