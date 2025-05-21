@@ -14,7 +14,6 @@ export class AuthenticationHandler {
     res: Response,
     next: NextFunction
   ) => {
-
     /** 
       #swagger.tags = ['User']
       #swagger.summary = 'Login user'
@@ -24,7 +23,19 @@ export class AuthenticationHandler {
          required: true,  
          schema: { "$ref": "#/components/schemas/LoginUser" }  
       }  
-     */  
+      #swagger.responses[200] = {  
+        description: 'Login successful',  
+        schema: { "$ref": "#/components/schemas/LoginResponse" }  
+      }
+      #swagger.responses[401] = {
+        description: 'Invalid email or password',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+      #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+     */
 
     try {
       const userRepository = new UserRepository();
@@ -45,24 +56,30 @@ export class AuthenticationHandler {
     }
   };
 
-     
-    
-    
-
   public static authenticate: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
+    // #swagger.security = [{ "Bearer": [] }]
+    // #swagger.auto = false
 
-      // #swagger.auto = false
 
     try {
       const token = req.headers["authorization"];
       if (token) {
-        const decoded = jwt.verify(token.replace(/^Bearer\s/, ''), configuration.get("RANDOM_KEY"));
+        const decoded = jwt.verify(
+          token.replace(/^Bearer\s/, ""),
+          configuration.get("RANDOM_KEY")
+        );
         if (decoded) {
-          req.body.user = decoded;
+        const { iat, exp, ...userData } = decoded as any;
+        res.locals.userData = userData;
+
+        if (res.locals.ownData.enforce) {
+          res.locals.ownData.tokenField = res.locals.ownData.tokenField;
+        }
+
           next();
         } else {
           res.status(401).json({ message: "Unauthorized" });
@@ -71,28 +88,27 @@ export class AuthenticationHandler {
         res.status(401).json({ message: "Unauthorized" });
       }
     } catch (error) {
-      next(error);
+
+      throw new CustomError.UnauthorizedError("Invalid token", error);
     }
   };
 
 
-      
-     
-       
-  public static ownData: RequestHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
 
-     // #swagger.auto = false
+  public static ownData(tokenField: string): RequestHandler {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      // #swagger.auto = false
 
-    if (!req.body) {
-      req.body = {};
-    }
-    req.body.ownData = true;
-    next();
-  };
+      res.locals = {
+        ownData: {
+          enforce: true,
+          tokenField: tokenField,
+        },
+      }
+
+      next();
+    };
+  }
 
   public static refreshToken: RequestHandler = async (
     req: Request,
@@ -100,10 +116,19 @@ export class AuthenticationHandler {
     next: NextFunction
   ) => {
     try {
-      const oldToken = req.headers["authorization"];
-      if (oldToken) {
-        const newToken = "new_token_12345";
-        res.status(200).json({ token: newToken });
+       const token = req.headers["authorization"];
+      if (token) {
+        const decoded = jwt.verify(
+          token.replace(/^Bearer\s/, ""),
+          configuration.get("RANDOM_KEY")
+        );
+        if (decoded) {
+          const { iat, exp, ...userData } = decoded as any;
+          const newToken = jwt.sign(userData, configuration.get("RANDOM_KEY"), {
+            expiresIn: "1h",
+          });
+          res.status(200).json({ token: newToken });
+        }
       } else {
         res.status(401).json({ message: "Unauthorized" });
       }

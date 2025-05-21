@@ -8,6 +8,27 @@ export class UserHandler {
     res: Response,
     next: NextFunction
   ) => {
+    /** 
+     #swagger.tags = ['User']
+     #swagger.summary = 'Get all users'
+     #swagger.description = 'Get all users and return user data'
+
+     #swagger.responses[200] = {  
+        description: 'List of users',  
+        schema: { "$ref": "#/components/schemas/ListUsersResponse" }
+      }
+      #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+      #swagger.responses[400] = {
+        description: 'No users found',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+     
+     
+     */
+
     const userRepository = new UserRepository();
     try {
       const users = await userRepository.findAll();
@@ -31,8 +52,46 @@ export class UserHandler {
     next: NextFunction
   ) => {
     const userRepository = new UserRepository();
+
+    /** 
+     #swagger.tags = ['User']
+     #swagger.summary = 'Get user'
+     #swagger.description = 'Get user by ID and return user data'
+     
+     #swagger.parameters['id'] = { in:'path', description: 'User ID', required: true, type: 'string' }
+ 
+     #swagger.responses[200] = {  
+        description: 'User Object',  
+        schema: { "$ref": "#/components/schemas/GetUserResponse" }
+      }
+      #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+      #swagger.responses[400] = {
+        description: 'No users found',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+       
+     */
+
     try {
       const userId = req.params.id;
+
+      const objectRestrains = res.locals.ownData ? res.locals : null;
+
+      if (objectRestrains) {
+        if (
+          objectRestrains.userData[objectRestrains.ownData.tokenField] !==
+          userId
+        ) {
+          throw new CustomError.ForbiddenError(
+            "Forbidden access",
+            "Resource not owned by user"
+          );
+        }
+      }
+
       const user = await userRepository.findById(userId);
       if (user == null) {
         res.status(400).json({ message: "User not found" });
@@ -50,8 +109,7 @@ export class UserHandler {
     res: Response,
     next: NextFunction
   ) => {
-    try {
-      /** 
+    /** 
       #swagger.tags = ['User']
       #swagger.summary = 'Create user'
       #swagger.description = 'Create new user and return user data'
@@ -60,8 +118,23 @@ export class UserHandler {
         required: true,  
         schema: { "$ref": "#/components/schemas/CreateUser" }  
       }  
-     */
 
+      #swagger.responses[200] = {  
+        description: 'User Object',  
+        schema: { "$ref": "#/components/schemas/GetUserResponse" }
+      }
+
+       #swagger.responses[400] = {
+        description: 'No users found',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+
+      #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+     */
+    try {
       const { name, email, password } = req.body;
       const userRepository = new UserRepository();
 
@@ -93,7 +166,7 @@ export class UserHandler {
     /** 
      #swagger.tags = ['User']
      #swagger.summary = 'Update user'
-     #swagger.description = 'Update user (self-update) and return user data'
+     #swagger.description = 'Update user and return user data'
      
      #swagger.requestBody = {  
         required: true,  
@@ -102,7 +175,20 @@ export class UserHandler {
       #swagger.parameters['id'] = { in:'path', description: 'User ID', required: true, type: 'string' }
       
 
-      #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = {  
+        description: 'User Updated Object',  
+        schema: { "$ref": "#/components/schemas/GetUserResponse" }
+     }
+
+     #swagger.responses[400] = {
+        description: 'Update Failed',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+     }
+
+     #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
        
      */
 
@@ -110,6 +196,21 @@ export class UserHandler {
       const userRepository = new UserRepository();
       const userId = req.params.id;
       const { id, name, email } = req.body;
+
+      const objectRestrains = res.locals.ownData ? res.locals : null;
+
+      if (objectRestrains) {
+        if (
+          objectRestrains.userData[objectRestrains.ownData.tokenField] !==
+          userId
+        ) {
+          throw new CustomError.ForbiddenError(
+            "Forbidden access",
+            "Resource not owned by user"
+          );
+        }
+      }
+
       const updatedUser = await userRepository.update(userId, {
         id,
         name,
@@ -133,8 +234,45 @@ export class UserHandler {
     next: NextFunction
   ) => {
     try {
+      /** 
+     #swagger.tags = ['User']
+     #swagger.summary = 'Delete user'
+     #swagger.description = 'Delete user by ID and return user data'
+     
+     #swagger.parameters['id'] = { in:'path', description: 'User ID', required: true, type: 'string' }
+ 
+     #swagger.responses[200] = {  
+        description: 'User Deleted Object',  
+        schema: { "$ref": "#/components/schemas/GetUserResponse" }
+      }
+      #swagger.responses[500] = {
+        description: 'Internal server error',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+      #swagger.responses[400] = {
+        description: 'No users found',
+        schema: { "$ref": "#/components/schemas/ErrorResponse" }
+      }
+       
+     */
+
       const userRepository = new UserRepository();
       const userId = req.params.id;
+
+      const objectRestrains = res.locals.ownData ? res.locals : null;
+
+      if (objectRestrains) {
+        if (
+          objectRestrains.userData[objectRestrains.ownData.tokenField] !==
+          userId
+        ) {
+          throw new CustomError.ForbiddenError(
+            "Forbidden access",
+            "Resource not owned by user"
+          );
+        }
+      }
+
       const deleteUser = await userRepository.delete(userId);
       console.log(deleteUser);
       if (deleteUser == null) {

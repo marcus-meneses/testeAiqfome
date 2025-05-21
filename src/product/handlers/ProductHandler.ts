@@ -5,6 +5,29 @@ export class ProductHandler {
   private static fakestore: Fakestore = new Fakestore();
 
   public static addProduct: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+
+    /** 
+      #swagger.tags = ['Product']
+      #swagger.summary = 'Add product'
+      #swagger.description = 'Add product to the database'
+      
+           
+      #swagger.responses[201] = {  
+         description: 'Product added successfully',  
+         schema: { "$ref": "#/components/schemas/ProductInsertedResponse" }
+       }
+       #swagger.responses[500] = {
+         description: 'Internal server error',
+         schema: { "$ref": "#/components/schemas/ErrorResponse" }
+       }
+       #swagger.responses[400] = {
+         description: 'No product found',
+         schema: { "$ref": "#/components/schemas/ErrorResponse" }
+       }
+       
+       
+      */
+
     try {
       const productId = parseInt(req.body.id);
       const userId = parseInt(req.body.userId);

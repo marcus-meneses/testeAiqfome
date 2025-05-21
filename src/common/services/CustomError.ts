@@ -83,6 +83,12 @@ class UnauthorizedError extends CustomError {
   }
 }
 
+class ForbiddenError extends CustomError {
+  constructor(message = "Forbidden", details?: any) {
+    super(message, 403, details);
+  }
+}
+
 export {
   DatabaseConnectionError,
   DatabaseQueryError,
@@ -95,5 +101,6 @@ export {
   DeletionFailedError,
   DatabaseTransactionError,
   UnauthorizedError,
+  ForbiddenError,
   CustomError as Parent,
 };

@@ -19,45 +19,50 @@ server.use(express.json());
 
 server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
+
+//done
 server.post(
   "/login", 
   AuthenticationHandler.login
 );
 
+//done
 server.post(
   "/users/register",
   UserHandler.registerUser
 );
 
+//done
 server.get(
   "/users",
-  AuthenticationHandler.authenticate,
   UserHandler.getAllUsers
 );
-
+//done
 server.get(
   "/users/:id",
+  AuthenticationHandler.ownData("id"),
   AuthenticationHandler.authenticate,
   UserHandler.getUserById
 );
 
+//done
 server.put(
   "/users/:id",
-  AuthenticationHandler.ownData,
+  AuthenticationHandler.ownData("id"),
   AuthenticationHandler.authenticate,
   UserHandler.updateUser
 );
 
 server.delete(
-  "/users/:id",
-  AuthenticationHandler.ownData,
+  "/users/:id", //124348a1-3d42-41cb-b202-e8893e1dd992
+ AuthenticationHandler.ownData("id"),
   AuthenticationHandler.authenticate,
   UserHandler.deleteUser
 );
 
 server.post(
   "/products",
-  AuthenticationHandler.ownData,
+ AuthenticationHandler.ownData("id"),
   AuthenticationHandler.authenticate,
   ProductHandler.addProduct
 );
@@ -70,8 +75,7 @@ server.get(
 
 server.get(
   "/products/user/:id",
-  AuthenticationHandler.ownData,
-
+  AuthenticationHandler.ownData("id"),
   ProductHandler.getProductsByUserId
 );
 
@@ -83,16 +87,21 @@ server.get(
 
 server.delete(
   "/products/:id",
-  AuthenticationHandler.ownData,
+ AuthenticationHandler.ownData("id"),
   AuthenticationHandler.authenticate,
   ProductHandler.deleteProduct
 );
 
-server.get("/api/fakeproducts", FakeStoreHandler.getAllProducts);
 
-server.get("/api/fakeproducts/:id", FakeStoreHandler.getProductById);
+server.get("/fakeproducts", FakeStoreHandler.getAllProducts);
+server.get("/fakeproducts/:id", FakeStoreHandler.getProductById);
+
+
 
 server.use(ErrorHandler.handleError);
+
+
+
 
 server.listen(configuration.get("PORT"), () => {
   logger.info(
